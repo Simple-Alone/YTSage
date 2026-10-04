@@ -1,5 +1,7 @@
 import type { TKey } from '../i18n';
 
+export const bilibiliChineseSubtitleLanguages = ['ai-zh', 'zh.*'];
+
 export const filenameTemplatePresets: Array<{ id: string; template: string; descKey: TKey }> = [
   { id: 'title', template: '%(title)s.%(ext)s', descKey: 'filenameTemplateDescTitle' },
   { id: 'title-id', template: '%(title)s_[%(id)s].%(ext)s', descKey: 'filenameTemplateDescTitleId' },

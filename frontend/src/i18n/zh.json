@@ -84,6 +84,8 @@
   "modeSubtitles": "字幕",
   "videoOutputFormat": "视频输出格式",
   "subtitleLanguages": "字幕语言",
+  "downloadChineseSubtitles": "下载中文字幕（含 AI 字幕）",
+  "downloadChineseSubtitlesHint": "下载所选分集在 B 站已有的中文字幕，不生成字幕；请使用有效的 B 站账号。开启「合并字幕」后会嵌入字幕轨，需播放器支持才能显示。",
   "proxyUrl": "代理地址",
   "proxyPlaceholder": "例如 http://127.0.0.1:7890",
   "concurrentFragments": "并发片段",

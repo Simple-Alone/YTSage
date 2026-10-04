@@ -84,6 +84,8 @@
   "modeSubtitles": "Subtitles",
   "videoOutputFormat": "Video output format",
   "subtitleLanguages": "Subtitle languages",
+  "downloadChineseSubtitles": "Download Chinese subtitles (including AI captions)",
+  "downloadChineseSubtitlesHint": "Download existing Chinese subtitles for the selected Bilibili videos; no subtitles are generated. Use a valid Bilibili account. Merge subtitles embeds a subtitle track that requires a compatible player to display.",
   "proxyUrl": "Proxy URL",
   "proxyPlaceholder": "e.g. http://127.0.0.1:7890",
   "concurrentFragments": "Concurrent fragments",

@@ -2,7 +2,7 @@ import { ChevronDown, ClipboardPaste, Download, ListVideo, LoaderCircle, Radar, 
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, type ApiClient } from '../../api/client';
 import type { CreateTaskRequest, DownloadMode, Platform, PlatformAccount, SettingsResponse, TaskResponse } from '../../api/types';
-import { filenameTemplatePresets } from '../../config/download';
+import { bilibiliChineseSubtitleLanguages, filenameTemplatePresets } from '../../config/download';
 import type { T, TKey } from '../../i18n';
 import { AnalysisDetails } from './AnalysisDetails';
 import { AnalysisSummary } from './AnalysisSummary';
@@ -123,6 +123,7 @@ export function WorkspacePage({ api, t, settings, state, onState, onTask }: Work
   const targetExtractionState = analysis ? rawText(analysis, 'target_extraction_state') : null;
   const canDownload = Boolean(analysis) && !busy && targetExtractionState !== 'unavailable' && !(analysis?.is_playlist && selectedPlaylistIndexes.length === 0);
   const accountPlatform = accountPlatformForUrl(url);
+  const showChinesePlaylistSubtitles = accountPlatform === 'bilibili' && analysis?.is_playlist;
   const platformAccounts = accountPlatform ? accounts.filter((account) => account.platform === accountPlatform) : [];
   const effectiveAccountId = accountPlatform && platformAccounts.some((account) => account.id === accountId && accountCanDownload(account)) ? accountId : null;
 
@@ -284,7 +285,19 @@ export function WorkspacePage({ api, t, settings, state, onState, onTask }: Work
 
         {analysis.is_playlist && <div className="playlist-plan-row"><span>{t('selectedVideos')}</span><strong>{selectedPlaylistIndexes.length} / {analysis.playlist_count || analysis.playlist_entries.length}</strong></div>}
 
-        {!!analysis.subtitles.length && <div className="plan-section subtitle-plan"><div className="plan-heading"><span>{t('subtitleLanguages')}</span><span className="badge blue">{selectedSubtitleLangs.length}</span></div><div className="check-grid">{analysis.subtitles.map((subtitle) => <label className="check" key={`${subtitle.language}-${subtitle.automatic ? 'auto' : 'manual'}`}><input type="checkbox" checked={selectedSubtitleLangs.includes(subtitle.language)} onChange={() => update({ selectedSubtitleLangs: toggleListItem(selectedSubtitleLangs, subtitle.language) })} /> {subtitle.language}{subtitle.name ? ` - ${subtitle.name}` : ''}</label>)}</div></div>}
+        {(showChinesePlaylistSubtitles || !!analysis.subtitles.length) && <div className="plan-section subtitle-plan">
+          <div className="plan-heading"><span>{t('subtitleLanguages')}</span><span className="badge blue">{selectedSubtitleLangs.length}</span></div>
+          {showChinesePlaylistSubtitles && <>
+            <label className="check"><input type="checkbox"
+              checked={bilibiliChineseSubtitleLanguages.every((language) => selectedSubtitleLangs.includes(language))}
+              onChange={(event) => update({ selectedSubtitleLangs: event.target.checked
+                ? [...new Set([...selectedSubtitleLangs, ...bilibiliChineseSubtitleLanguages])]
+                : selectedSubtitleLangs.filter((language) => !bilibiliChineseSubtitleLanguages.includes(language)) })}
+            /> {t('downloadChineseSubtitles')}</label>
+            <small className="muted">{t('downloadChineseSubtitlesHint')}</small>
+          </>}
+          {!!analysis.subtitles.length && <div className="check-grid">{analysis.subtitles.map((subtitle) => <label className="check" key={`${subtitle.language}-${subtitle.automatic ? 'auto' : 'manual'}`}><input type="checkbox" checked={selectedSubtitleLangs.includes(subtitle.language)} onChange={() => update({ selectedSubtitleLangs: toggleListItem(selectedSubtitleLangs, subtitle.language) })} /> {subtitle.language}{subtitle.name ? ` - ${subtitle.name}` : ''}</label>)}</div>}
+        </div>}
 
         <div className="download-plan-actions"><button className="primary start-download" onClick={() => void createTask()} disabled={!canDownload}><Download aria-hidden="true" />{busy ? t('working') : t('startDownload')}</button>{analysis.is_playlist && <button onClick={() => void createMonitor()} disabled={!canDownload}><Radar aria-hidden="true" />{t('createMonitor')}</button>}</div>
         <div className="download-destination"><Settings2 aria-hidden="true" /><span>{t('usesSavedDefaults')}</span></div>
